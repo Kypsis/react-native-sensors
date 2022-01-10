@@ -6,6 +6,7 @@ import * as RNSensors from "./rnsensors";
 const {
   RNSensorsGyroscope: GyroNative,
   RNSensorsAccelerometer: AccNative,
+  RNSensorsLinearAcceleration: LinearAccNative,
   RNSensorsMagnetometer: MagnNative,
   RNSensorsBarometer: BarNative,
   RNSensorsOrientation: OrientNative,
@@ -14,6 +15,7 @@ const {
 
 const listenerKeys = new Map([
   ["accelerometer", "RNSensorsAccelerometer"],
+  ["linearAcceleration", "RNSensorsLinearAcceleration"],
   ["gyroscope", "RNSensorsGyroscope"],
   ["magnetometer", "RNSensorsMagnetometer"],
   ["barometer", "RNSensorsBarometer"],
@@ -23,6 +25,7 @@ const listenerKeys = new Map([
 
 const nativeApis = new Map([
   ["accelerometer", AccNative],
+  ["linearAcceleration", LinearAccNative],
   ["gyroscope", GyroNative],
   ["magnetometer", MagnNative],
   ["barometer", BarNative],
@@ -32,6 +35,7 @@ const nativeApis = new Map([
 
 const eventEmitterSubscription = new Map([
   ["accelerometer", null],
+  ["linearAcceleration", null],
   ["gyroscope", null],
   ["magnetometer", null],
   ["barometer", null],
@@ -81,6 +85,7 @@ function makeSingleton() {
 }
 
 const accelerometer = createSensorObservable("accelerometer");
+const linearAcceleration = createSensorObservable("linearAcceleration");
 const gyroscope = createSensorObservable("gyroscope");
 const magnetometer = createSensorObservable("magnetometer");
 const barometer = createSensorObservable("barometer");
@@ -90,6 +95,7 @@ const gravity = createSensorObservable("gravity");
 export default {
   gyroscope,
   accelerometer,
+  linearAcceleration,
   magnetometer,
   barometer,
   orientation,

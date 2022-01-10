@@ -2,6 +2,7 @@ import { NativeModules } from "react-native";
 const {
   RNSensorsGyroscope: GyroNative,
   RNSensorsAccelerometer: AccNative,
+  RNSensorsLinearAcceleration: LinearAccNative,
   RNSensorsMagnetometer: MagnNative,
   RNSensorsBarometer: BarNative,
   RNSensorsOrientation: OrientNative,
@@ -14,6 +15,7 @@ if (!GyroNative && !AccNative && !MagnNative && !BarNative && !OrientNative && !
 
 const nativeApis = new Map([
   ["accelerometer", AccNative],
+  ["linearAcceleration", LinearAccNative],
   ["gyroscope", GyroNative],
   ["magnetometer", MagnNative],
   ["barometer", BarNative],
@@ -49,6 +51,21 @@ export function stop(type) {
 export function setUpdateInterval(type, updateInterval) {
   const api = nativeApis.get(type.toLocaleLowerCase());
   api.setUpdateInterval(updateInterval);
+}
+
+export function setAccelerationXThreshold(type, threshold) {
+  const api = nativeApis.get(type.toLocaleLowerCase());
+  api.setAccelerationXThreshold(threshold);
+}
+
+export function setAccelerationYThreshold(type, threshold) {
+  const api = nativeApis.get(type.toLocaleLowerCase());
+  api.setAccelerationYThreshold(threshold);
+}
+
+export function setAccelerationZThreshold(type, threshold) {
+  const api = nativeApis.get(type.toLocaleLowerCase());
+  api.setAccelerationZThreshold(threshold);
 }
 
 export function setLogLevelForType(type, level) {

@@ -1,12 +1,14 @@
 package com.sensors;
 
+import android.content.Context;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.SystemClock;
-import androidx.annotation.Nullable;
 import android.util.Log;
+
+import androidx.annotation.Nullable;
 
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.Promise;
@@ -25,19 +27,27 @@ public class RNSensor extends ReactContextBaseJavaModule implements SensorEventL
   private int interval;
   private Arguments arguments;
   private int logLevel = 0;
-  private String sensorName;
-  private int sensorType;
-  private float[] rotation = new float[9];
-  private float[] orientation = new float[3];
-  private float[] quaternion = new float[4];
+  private final String sensorName;
+  private final int sensorType;
+  private final float[] rotation = new float[9];
+  private final float[] orientation = new float[3];
+  private final float[] quaternion = new float[4];
+  private float accelerationXThreshold = 0.0f;
+  private float accelerationYThreshold = 0.0f;
+  private float accelerationZThreshold = 0.0f;
 
   public RNSensor(ReactApplicationContext reactContext, String sensorName, int sensorType) {
     super(reactContext);
     this.reactContext = reactContext;
     this.sensorType = sensorType;
     this.sensorName = sensorName;
-    this.sensorManager = (SensorManager)reactContext.getSystemService(reactContext.SENSOR_SERVICE);
+    this.sensorManager = (SensorManager) reactContext.getSystemService(Context.SENSOR_SERVICE);
     this.sensor = this.sensorManager.getDefaultSensor(this.sensorType);
+  }
+
+  private static double sensorTimestampToEpochMilliseconds(long elapsedTime) {
+    // elapsedTime = The time in nanoseconds at which the event happened.
+    return System.currentTimeMillis() + ((elapsedTime - SystemClock.elapsedRealtimeNanos()) / 1000000L);
   }
 
   // RN Methods
@@ -54,6 +64,21 @@ public class RNSensor extends ReactContextBaseJavaModule implements SensorEventL
   @ReactMethod
   public void setUpdateInterval(int newInterval) {
     this.interval = newInterval;
+  }
+
+  @ReactMethod
+  public void setAccelerationXThreshold(float threshold) {
+    this.accelerationXThreshold = threshold;
+  }
+
+  @ReactMethod
+  public void setAccelerationYThreshold(float threshold) {
+    this.accelerationYThreshold = threshold;
+  }
+
+  @ReactMethod
+  public void setAccelerationZThreshold(float threshold) {
+    this.accelerationZThreshold = threshold;
   }
 
   @ReactMethod
@@ -77,11 +102,6 @@ public class RNSensor extends ReactContextBaseJavaModule implements SensorEventL
     return this.sensorName;
   }
 
-  private static double sensorTimestampToEpochMilliseconds(long elapsedTime) {
-    // elapsedTime = The time in nanoseconds at which the event happened.
-    return System.currentTimeMillis() + ((elapsedTime-SystemClock.elapsedRealtimeNanos())/1000000L);
-  }
-
   // SensorEventListener Interface
   private void sendEvent(String eventName, @Nullable WritableMap params) {
     try {
@@ -95,18 +115,18 @@ public class RNSensor extends ReactContextBaseJavaModule implements SensorEventL
   @Override
   public void onSensorChanged(SensorEvent sensorEvent) {
     int currentType = sensorEvent.sensor.getType();
-    if(currentType != this.sensorType) { // not for the current Sensor
+    if (currentType != this.sensorType) { // not for the current Sensor
       return;
     }
 
     double tempMs = (double) System.currentTimeMillis();
     if (tempMs - lastReading >= interval) {
       lastReading = tempMs;
-      WritableMap map = this.arguments.createMap();
+      WritableMap map = Arguments.createMap();
 
-      switch (currentType)
-      {
+      switch (currentType) {
         case Sensor.TYPE_ACCELEROMETER:
+        case Sensor.TYPE_LINEAR_ACCELERATION:
         case Sensor.TYPE_GRAVITY:
         case Sensor.TYPE_GYROSCOPE:
         case Sensor.TYPE_MAGNETIC_FIELD:
@@ -140,8 +160,11 @@ public class RNSensor extends ReactContextBaseJavaModule implements SensorEventL
       }
 
       // timestamp is added to all events
-      map.putDouble("timestamp", this.sensorTimestampToEpochMilliseconds(sensorEvent.timestamp));
-      this.sendEvent(this.sensorName, map);
+      if (sensorEvent.values[0] > accelerationXThreshold || sensorEvent.values[1] > accelerationYThreshold
+        || sensorEvent.values[2] > accelerationZThreshold) {
+        map.putDouble("timestamp", sensorTimestampToEpochMilliseconds(sensorEvent.timestamp));
+        this.sendEvent(this.sensorName, map);
+      }
     }
   }
 
