@@ -3,6 +3,7 @@ declare module "react-native-sensors" {
 
   type Sensors = {
     accelerometer: "accelerometer";
+    linearAcceleration: "linearAcceleration";
     gyroscope: "gyroscope";
     magnetometer: "magnetometer";
     barometer: "barometer";
@@ -13,6 +14,10 @@ declare module "react-native-sensors" {
   export const SensorTypes: Sensors;
 
   export const setUpdateIntervalForType: (type: keyof Sensors, updateInterval: number) => void;
+
+  export const setAccelerationXThreshold: (type: keyof Sensors, threshold: number) => void;
+  export const setAccelerationYThreshold: (type: keyof Sensors, threshold: number) => void;
+  export const setAccelerationZThreshold: (type: keyof Sensors, threshold: number) => void;
   
   export const setLogLevelForType: (type: keyof Sensors, logLevel: 0 | 1 | 2) => void;
 
@@ -41,6 +46,7 @@ declare module "react-native-sensors" {
 
   type SensorsBase = {
     accelerometer: Observable<SensorData>;
+    linearAcceleration: Observable<SensorData>
     gyroscope: Observable<SensorData>;
     magnetometer: Observable<SensorData>;
     barometer: Observable<BarometerData>;
@@ -48,7 +54,7 @@ declare module "react-native-sensors" {
     gravity: Observable<SensorData>
   };
 
-  export const { accelerometer, gyroscope, magnetometer, barometer, orientation, gravity }: SensorsBase;
+  export const { accelerometer, linearAcceleration, gyroscope, magnetometer, barometer, orientation, gravity }: SensorsBase;
 
   const sensors: SensorsBase;
 
