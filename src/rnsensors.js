@@ -27,7 +27,7 @@ const nativeApis = new Map([
 const availableSensors = {};
 
 export function start(type) {
-  const api = nativeApis.get(type.toLocaleLowerCase());
+  const api = nativeApis.get(type);
   api.startUpdates();
 }
 
@@ -36,7 +36,7 @@ export function isAvailable(type) {
     return availableSensors[type];
   }
 
-  const api = nativeApis.get(type.toLocaleLowerCase());
+  const api = nativeApis.get(type);
   const promise = api.isAvailable();
   availableSensors[type] = promise;
 
@@ -44,31 +44,31 @@ export function isAvailable(type) {
 }
 
 export function stop(type) {
-  const api = nativeApis.get(type.toLocaleLowerCase());
+  const api = nativeApis.get(type);
   api.stopUpdates();
 }
 
 export function setUpdateInterval(type, updateInterval) {
-  const api = nativeApis.get(type.toLocaleLowerCase());
+  const api = nativeApis.get(type);
   api.setUpdateInterval(updateInterval);
 }
 
 export function setAccelerationXThreshold(type, threshold) {
-  const api = nativeApis.get(type.toLocaleLowerCase());
+  const api = nativeApis.get(type);
   api.setAccelerationXThreshold(threshold);
 }
 
 export function setAccelerationYThreshold(type, threshold) {
-  const api = nativeApis.get(type.toLocaleLowerCase());
+  const api = nativeApis.get(type);
   api.setAccelerationYThreshold(threshold);
 }
 
 export function setAccelerationZThreshold(type, threshold) {
-  const api = nativeApis.get(type.toLocaleLowerCase());
+  const api = nativeApis.get(type);
   api.setAccelerationZThreshold(threshold);
 }
 
 export function setLogLevelForType(type, level) {
-  const api = nativeApis.get(type.toLocaleLowerCase());
+  const api = nativeApis.get(type);
   api.setLogLevel(level);
 }

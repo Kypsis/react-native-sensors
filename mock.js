@@ -16,6 +16,7 @@ const sensorMock = (observerValue) => ({
 const rnSensors = {
   SensorTypes: {
     accelerometer: 'accelerometer',
+    linearAcceleration: 'linearAcceleration',
     gyroscope: 'gyroscope',
     magnetometer: 'magnetometer',
     barometer: 'barometer',
@@ -24,6 +25,7 @@ const rnSensors = {
 
   accelerometer: sensorMock(),
   gyroscope: sensorMock(),
+  linearAcceleration: sensorMock(),
   magnetometer: sensorMock(),
   barometer: sensorMock({ pressure: 0 }),
   gravity: sensorMock(),
